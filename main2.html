@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<title>Caffn8r</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+<body>
+
+<!-- Header -->
+<header style="background-image: url('background3.jpg')">
+<!-- make this background pic adjust based on screen size --> 
+  <div class="pk-center">
+  <h1 class="pk-xxxlarge pk-animate-right">CAFFN8R</h1>
+    <h6 class="pk-animate-left">Your Joe, your way, your hood</h6>
+    <div class="pk-padding-32">
+      <button class="pk-btn pk-xlarge pk-dark-grey pk-hover-light-grey" onclick="document.getElementById('id01').style.display='block'" style="font-weight:900;">caffen8 me NOW!</button>
+    </div>
+  </div>
+</header>
+
+<!-- Modal -->
+<div id="id01" class="pk-modal">
+    <div class="pk-modal-content pk-card-8 pk-animate-top">
+      <header class="pk-container pk-theme-l1"> 
+        <span onclick="document.getElementById('id01').style.display='none'" class="pk-closebtn">yep</span>
+        <h4>Oh yes...good things are happening! You ready?</h4>
+      <!-- INSERT: populate the below based current location (neighborhood) -->  
+      </header>
+    </div>
+</div>
+
+<div class="pk-row-padding pk-center pk-margin-top">
+<div class="pk-third">
+  <div class="pk-card-2 pk-padding-top" style="min-height:460px">
+  <h4><b>your hood</h4></b><br>
+  <i class="fa fa-map-marker" style="font-size:120px"></i>
+  <b><p>Insert Google Map</p></b>
+  <p>Show which neighborhood is being displayed and have input box to change it</p>
+  <p>Integrate google autocomplete</p>
+  </div>
+</div>
+
+<div class="pk-third">
+  <div class="pk-card-2 pk-padding-top" style="min-height:460px">
+  <h4><b>what's buzzin?</h4></b><br>
+  <i class="fa fa-comments-o" style="font-size:120px"></i>
+  <b><p>Insert Word Cloud</p></b>
+  <p>Based on all coffee shops in selected neighborhood</p>
+  <p>Or if coffee shop is selected, then it is words from that coffee shop</p>
+  <p>Click on a word to pull up list (on right) of all relevant coffee shops</p>
+  <p>Collected from yelp, twitter, facebook?</p>
+  <p>Excludes common words like "the" "it" etc </p>
+  </div>
+</div>
+
+<div class="pk-third">
+  <div class="pk-card-2 pk-padding-top" style="min-height:460px">
+  <h4><b>caffn8tion stations</h4></b><br>
+  <i class="fa fa-coffee" style="font-size:120px"></i>
+  <b><p>Insert list of coffee shops</p></b>
+  <p>Click on coffee shop to update word cloud for just that coffee shop</p>
+  <p>This also updates the map to focus on the selected coffee shop</p>
+  <p>This also displays a profile below with google place data, yelp data and specific social media feeds from twitter, facebook, etc</p>
+  <p>Default is five results but range bar allows expansion</p>
+  <p>Like vrist, have option to "x" or save as fav</p>
+
+  </div>
+</div>
+</div>
+     
+<!-- <div class="pk-center">
+  <h2>Containers</h2>
+  <p>Use containers to create headers, sections and footers.</p>
+</div>  -->  
+
+<header class="pk-container pk-blue-grey">
+  <h2>Starbucks Roastery and Reserve Tasting Room</h2>
+</header>
+
+<div class="pk-padding pk-white">
+  <span onclick="this.parentElement.style.display='none'" class="pk-closebtn"><i class="fa fa-remove"></i></span>
+  <h2>Caffn8tion Station Deets</h2>
+  <p>Insert info about the coffee shop (incl pics?) from Google or Yelp</p>
+
+  <h3>Social Media Feed</h3>
+  <p>Insert feeds sorted by most recent first with (colored?) font awesomes
+  <i class="fa fa-yelp" style="font-size:12px"></i>
+  <i class="fa fa-facebook" style="font-size:12px"></i>  
+  <i class="fa fa-twitter" style="font-size:12px"></i> 
+  <i class="fa fa-foursquare" style="font-size:12px"></i> 
+
+  </p>
+
+</div>
+
+<!-- Footer -->
+<footer class="pk-container pk-blue-grey">
+<!--   <h5>caffn8r</h5> -->
+  <p class="pk-opacity">Caffn8ed in Seattle by pkohn, 2016 </p>
+</footer>
+
+
+</body>
+</html>

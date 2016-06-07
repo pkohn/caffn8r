@@ -1,4 +1,6 @@
 
+#thisLeaflet { height: 300px; }
+
 /* pk.CSS 2.64 by Jan Egil and Borge Refsnes */
 *{-webkit-box-sizing:border-box;-moz-box-sizing:border-box;box-sizing:border-box}
 
@@ -29,7 +31,7 @@ legend{border:0;padding:0}pre,textarea{overflow:auto}
 
 html,body{font-family:Verdana,sans-serif;font-size:15px;line-height:1.5}html{overflow-x:hidden}
 h1,h2,h3,h4,h5,h6,.pk-slim,.pk-wide{font-family:"Segoe UI",Arial,sans-serif}
-h1{font-size:36px}h2{font-size:30px}h3{font-size:24px}h4{font-size:20px}h5{font-size:18px}h6{font-size:16px}
+h1{font-size:48px}h2{font-size:30px}h3{font-size:24px}h4{font-size:20px}h5{font-size:18px}h6{font-size:16px}
 .pk-serif{font-family:"Times New Roman",Times,serif}
 h1,h2,h3,h4,h5,h6{font-weight:400;margin:10px 0}.pk-wide{letter-spacing:4px}
 h1 a,h2 a,h3 a,h4 a,h5 a,h6 a{font-weight:inherit}
@@ -180,7 +182,7 @@ input[type=checkbox].pk-check:disabled+.pk-validate,input[type=radio].pk-radio:d
 .pk-large{font-size:18px!important}
 .pk-xlarge{font-size:24px!important}
 .pk-xxlarge{font-size:36px!important}
-.pk-xxxlarge{font-size:48px!important}
+.pk-xxxlarge{font-size:48px!important color= #FFFFFF}
 .pk-jumbo{font-size:64px!important}
 .pk-vertical{word-break:break-all;line-height:1;text-align:center;width:0.6em}
 .pk-left-align{text-align:left!important}.pk-right-align{text-align:right!important}
@@ -360,3 +362,30 @@ input[type=checkbox].pk-check:disabled+.pk-validate,input[type=radio].pk-radio:d
 .pk-border-pale-yellow,.pk-hover-border-pale-yellow:hover{border-color:#ffffd7!important}.pk-border-pale-blue,.pk-hover-border-pale-blue:hover{border-color:#e7ffff!important}
 .pk-opacity,.pk-hover-opacity:hover{opacity:0.60}
 .pk-text-shadow{text-shadow:1px 1px 0 #444}.pk-text-shadow-white{text-shadow:1px 1px 0 #ddd}
+
+   .col {
+            width: 31vw;
+            margin: 1em .5em;
+            display: inline-block;
+            box-sizing: border-box;
+            vertical-align: top;
+        }
+        .col:first-child {
+            margin-left: 1em;
+        }
+        .col:last-child {
+            margin-right: 1em;
+        }
+
+        .business {
+            padding: 0 1em;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 1em;
+            border: 0px solid #ccc;
+            text-align: left;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        .clicked-business{}

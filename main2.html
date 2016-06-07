@@ -4,101 +4,374 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
+<link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
+<style type="text/css">
+text:hover {
+    cursor: pointer;
+}
+
+.title-text {
+    color: white;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, .5);
+}
+</style>
+
 <body>
+    <!-- Header -->
+    <header style="background-image: url('background2.jpg'); background-size: 100% auto">
+        <!-- make this background pic adjust based on screen size -->
+        <script src="https://code.jquery.com/jquery-2.2.4.js"></script>
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+        <div class="pk-center">
+            <h1 class="pk-xxxlarge pk-animate-right title-text">CAFFN8R</h1>
+            <h6 class="pk-animate-left title-text"><b><i>Find your local buzz</h6></b>
+            </i>
+            <div class="pk-padding-32">
+                <!-- <form>
+    <label class="title-text">
+      Search Area
+      <input type="text" name="location" placeholder="Where are you?"><br><br>
+    </label>
+  </form>
 
-<!-- Header -->
-<header style="background-image: url('background3.jpg')">
-<!-- make this background pic adjust based on screen size --> 
-  <div class="pk-center">
-  <h1 class="pk-xxxlarge pk-animate-right">CAFFN8R</h1>
-    <h6 class="pk-animate-left">Your Joe, your way, your hood</h6>
-    <div class="pk-padding-32">
-      <button class="pk-btn pk-xlarge pk-dark-grey pk-hover-light-grey" onclick="document.getElementById('id01').style.display='block'" style="font-weight:900;">caffen8 me NOW!</button>
+      <button class="pk-btn pk-xlarge pk-dark-grey pk-hover-light-grey" onclick="document.getElementById('id01').style.display='block'" style="font-weight:900;">Clik me meow</button> -->
+                <div class="title-text">
+                    <form id="location-search">
+                        <label>
+                            Location
+                            <input type="text" placeholder="Where are you?" name="location">
+                        </label>
+                        <button>Search</button>
+                    </form>
+                </div>
+                <pre></pre>
+                <script>
+                $('#location-search').on('submit', function(e) {
+                    e.preventDefault();
+
+                    var location = $(this).find('input').val();
+
+                    $.ajax({
+                        url: 'http://nominatim.openstreetmap.org/search/usa/{{term}}?format=json&addressdetails=1'.replace('{{term}}', location)
+                    }).then(function(res) {
+
+                        searchYelp(res[0].lat, res[0].lon);
+                        // document.getElementById('numBiz').textContent = res.businesses.length;
+                        //UPDATE MAP and add markers L.map('thisLeaflet').setView([res[0].lat, res[0].lon], 12);
+                        //UPDATE WordCloud
+                        $("#wordcloud").empty();
+
+                    })
+
+                });
+                </script>
+            </div>
+        </div>
+    </header>
+    <div class="pk-row-padding pk-center pk-margin-top">
+        <div class="pk-third">
+            <div class="pk-card-2 pk-padding-top" style="min-height:460px">
+                <h4><b>your hood</h4></b>
+                <i class="fa fa-map-marker" style="font-size:100px"></i>
+
+                <head>
+                    <style>
+                    #map {
+                        width: 500px;
+                        height: 400px;
+                    }
+                    </style>
+                </head>
+                <div id="thisLeaflet"></div>
+            </div>
+        </div>
+        <div class="pk-third">
+            <div class="pk-card-2 pk-padding-top" style="min-height:460px">
+                <h4><b>what's buzzin?</h4></b>
+                <i class="fa fa-comments-o" style="font-size:100px"></i>
+                <svg id="wordcloud"></svg>
+            </div>
+        </div>
+        <div class="pk-third">
+            <div class="pk-card-2 pk-padding-top" style="min-height:460px">
+                <h4><b><span id = "numBiz"></span> caffn8tion stations found</h4></b>
+                <h4></h4>
+                <i class="fa fa-coffee" style="font-size:100px"></i>
+                <div class="businesses"></div>
+                <script type="text/html" id="business-template">
+                    <div class="business">
+                        <li id="business-{{id}}" class="business-list-item"><a href="{{url}}" class="business-link" data-id="{{id}}">{{name}}</a> ({{review_count}} reviews)</li>
+                    </div>
+                </script>
+            </div>
+        </div>
     </div>
-  </div>
-</header>
-
-<!-- Modal -->
-<div id="id01" class="pk-modal">
-    <div class="pk-modal-content pk-card-8 pk-animate-top">
-      <header class="pk-container pk-theme-l1"> 
-        <span onclick="document.getElementById('id01').style.display='none'" class="pk-closebtn">yep</span>
-        <h4>Oh yes...good things are happening! You ready?</h4>
-      <!-- INSERT: populate the below based current location (neighborhood) -->  
-      </header>
+    <div id="business-info"></div>
+    <script type="text/html" id="business-info-template">
+        <header class="pk-container pk-blue-grey">
+            <h2>Caffn8tion Station Deets</h2>
+        </header>
+        <div class="pk-padding pk-white">
+            <h2>{{name}} ({{location.neighborhoods}}, {{location.city}})</h2>
+            <div class="business">
+                <div>
+                    <img src="{{image_url}}" alt="">
+                </div>
+                <p>Located @ {{location.address}} (<i class="fa fa-phone-square" style="font-size:15px"></i>: {{phone}})</p>
+                <p>{{rating}} stars: "{{snippet_text}}"</p>
+            </div>
+    </script>
     </div>
-</div>
+    
+    <!-- Footer -->
+    <footer class="pk-container pk-blue-grey">
 
-<div class="pk-row-padding pk-center pk-margin-top">
-<div class="pk-third">
-  <div class="pk-card-2 pk-padding-top" style="min-height:460px">
-  <h4><b>your hood</h4></b><br>
-  <i class="fa fa-map-marker" style="font-size:120px"></i>
-  <b><p>Insert Google Map</p></b>
-  <p>Show which neighborhood is being displayed and have input box to change it</p>
-  <p>Integrate google autocomplete</p>
-  </div>
-</div>
+        <p class="pk-opacity">Caffn8ed in Seattle by pkohn, 2016 </p>
+    </footer>
+    <script src="https://cdn.rawgit.com/bettiolo/oauth-signature-js/master/dist/oauth-signature.min.js"></script>
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
 
-<div class="pk-third">
-  <div class="pk-card-2 pk-padding-top" style="min-height:460px">
-  <h4><b>what's buzzin?</h4></b><br>
-  <i class="fa fa-comments-o" style="font-size:120px"></i>
-  <b><p>Insert Word Cloud</p></b>
-  <p>Based on all coffee shops in selected neighborhood</p>
-  <p>Or if coffee shop is selected, then it is words from that coffee shop</p>
-  <p>Click on a word to pull up list (on right) of all relevant coffee shops</p>
-  <p>Collected from yelp, twitter, facebook?</p>
-  <p>Excludes common words like "the" "it" etc </p>
-  </div>
-</div>
+    <script>
+    // L.mapbox.accessToken = 'pk.eyJ1IjoicGtvaG4iLCJhIjoiY2lvcTMxeXpxMDAwaHVlbTBrY3J5dDduYiJ9.SIavQJ1I80cZkT1hb_o-og';
+    //     var mymap = L.mapbox.map('thisLeaflet', 'mapbox.streets');
+    //     L.control.locate().addTo(mymap);
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+    <script type="text/javascript" src="d3cloud.js"></script>
+    <!-- <script src ="https://rawgit.com/jasondavies/d3-cloud/master/build/d3.layout.cloud.js"></script> -->
+    <script type="text/javascript" src="cloud.js"></script>
+    <script type="text/javascript" src="main.js"></script>
+    <script>
+    var businessWords;
+    var businessInfo;
 
-<div class="pk-third">
-  <div class="pk-card-2 pk-padding-top" style="min-height:460px">
-  <h4><b>caffn8tion stations</h4></b><br>
-  <i class="fa fa-coffee" style="font-size:120px"></i>
-  <b><p>Insert list of coffee shops</p></b>
-  <p>Click on coffee shop to update word cloud for just that coffee shop</p>
-  <p>This also updates the map to focus on the selected coffee shop</p>
-  <p>This also displays a profile below with google place data, yelp data and specific social media feeds from twitter, facebook, etc</p>
-  <p>Default is five results but range bar allows expansion</p>
-  <p>Like vrist, have option to "x" or save as fav</p>
-
-  </div>
-</div>
-</div>
-     
-<!-- <div class="pk-center">
-  <h2>Containers</h2>
-  <p>Use containers to create headers, sections and footers.</p>
-</div>  -->  
-
-<header class="pk-container pk-blue-grey">
-  <h2>Starbucks Roastery and Reserve Tasting Room</h2>
-</header>
-
-<div class="pk-padding pk-white">
-  <span onclick="this.parentElement.style.display='none'" class="pk-closebtn"><i class="fa fa-remove"></i></span>
-  <h2>Caffn8tion Station Deets</h2>
-  <p>Insert info about the coffee shop (incl pics?) from Google or Yelp</p>
-
-  <h3>Social Media Feed</h3>
-  <p>Insert feeds sorted by most recent first with (colored?) font awesomes
-  <i class="fa fa-yelp" style="font-size:12px"></i>
-  <i class="fa fa-facebook" style="font-size:12px"></i>  
-  <i class="fa fa-twitter" style="font-size:12px"></i> 
-  <i class="fa fa-foursquare" style="font-size:12px"></i> 
-
-  </p>
-
-</div>
-
-<!-- Footer -->
-<footer class="pk-container pk-blue-grey">
-<!--   <h5>caffn8r</h5> -->
-  <p class="pk-opacity">Caffn8ed in Seattle by pkohn, 2016 </p>
-</footer>
+    // PUT YOUR KEYS HERE
+    var keys = {
+        consumer_key: '1sQO6VG_mdXNkedsMVeMKw',
+        consumer_secret: 'Blj3AM-0SIJirxNl_md4JsBMFDE',
+        token: '-FwwA5NLdb7TSEKBDXSglrjDCfHSS-EN',
+        token_secret: 'JfGBdnqOKTF_OiZrxeWkWr9JqWU'
+    };
 
 
+    navigator.geolocation.getCurrentPosition(function(position) {
+
+        console.log(position);
+
+        searchYelp(position.coords.latitude, position.coords.longitude);
+
+    }, function() {
+        searchYelp();
+    });
+
+
+    function searchYelp(lat, lng) {
+        searchHelper().catch(function(err) {
+            console.log(err.stack);
+            searchYelp();
+        });
+
+        function searchHelper() {
+            // return search('coffee', 47.609895, -122.33025)
+            return search('coffee', lat || 47.609895, lng || -122.33025)
+                .then(res => {
+                    const template = document.getElementById('business-template').innerHTML;
+                    const container = document.getElementsByClassName('businesses')[0];
+
+                    var max = 0;
+
+                    businessWords = {};
+                    businessInfo = {};
+
+                    document.getElementById('numBiz').textContent = res.businesses.length;
+
+                    // Get all the words and counts of each word
+                    const wordMap = res.businesses.reduce((acc, business) => {
+
+                        businessInfo[business.id] = business;
+
+                        var snippetWords = business.snippet_text.toLowerCase().replace(/[^\w ]/g, '').split(' ');
+
+                        snippetWords.forEach(word => {
+                            if (stopWords[word]) return;
+
+                            businessWords[word] = (businessWords[word] || {});
+                            businessWords[word][business.id] = true;
+
+                            acc[word] = (acc[word] || 0) + 1;
+
+                        });
+
+                        return acc;
+                    }, {});
+
+                    // Find the most common word
+                    Object.keys(wordMap).forEach(word => {
+                        max = Math.max(wordMap[word], max);
+                    });
+
+                    console.log(max, wordMap);
+
+                    const words = Object.keys(wordMap).map(word => {
+                        return {
+                            text: word,
+                            size: 10 + 100 * (wordMap[word] / max)
+                        }
+                    });
+
+                    Object.keys(businessWords).forEach(function(word) {
+                        businessWords[word] = Object.keys(businessWords[word]);
+                    });
+
+                    drawCloud(words);
+
+                    const items = res.businesses.map(business => compile(template, business));
+
+
+                    container.innerHTML = items
+                        .reduce((acc, n, i) => {
+                            acc[i % 1] = (acc[i % 1] || []).concat(n);
+                            return acc;
+                        }, [])
+                        .map(col => `<div class="col">${col.join('')}</div>`)
+                        .join('');
+                });
+        }
+    }
+
+    document.body.addEventListener('click', function(event) {
+        var target = event.target;
+        if (target.nodeName === 'text') {
+            const ids = businessWords[event.target.textContent];
+
+            [].slice.call(document.getElementsByClassName('business-list-item')).forEach(function(item) {
+                item.style.fontWeight = 300;
+            });
+
+            const businesses = ids.map(function(id) {
+
+                var listElement = document.getElementById('business-' + id);
+
+                listElement.style.fontWeight = 900;
+
+                return businessInfo[id];
+
+            });
+
+            console.log(businesses);
+
+            map.removeLayer(businessLayer);
+
+            var points = businesses.map(function(business) {
+                return [
+                    business.location.coordinate.latitude,
+                    business.location.coordinate.longitude
+                ];
+            });
+
+            var markers = points.map(function(coords, i) {
+                return L.marker(coords)
+                    .bindPopup("<b>Hello!</b><br>My name is " + businesses[i].name + '.');
+            });
+
+            businessLayer = L.layerGroup(markers)
+                .addTo(map);
+
+
+        } else if (target.classList.contains('business-link')) {
+            event.preventDefault();
+            var business = businessInfo[target.dataset.id];
+            console.log(business);
+
+            const template = document.getElementById('business-info-template').innerHTML;
+            const container = document.getElementById('business-info');
+
+            container.innerHTML = compile(template, business);
+
+        }
+    });
+
+
+    function compile(template, obj) {
+        return template.replace(/\{\{([^\}]+)\}\}/g, (match, capture, index) => {
+            const path = capture.split('.');
+            const replacement = path.reduce((acc, prop) => {
+                if (acc) {
+                    return acc[prop];
+                }
+            }, obj);
+            return replacement || '';
+        });
+    }
+
+
+    function search(term, lat, lng) {
+
+        return new Promise(function(resolve, reject) {
+
+            function randomString(length, chars) {
+                var result = '';
+                for (var i = length; i > 0; --i) result += chars[Math.round(Math.random() * (chars.length - 1))];
+                return result;
+            }
+
+            const callback = 'callback_' + randomString(10, '0123456789');
+
+            var method = 'GET';
+            var url = 'http://api.yelp.com/v2/search';
+            var params = {
+                callback: callback,
+                ll: lat + ',' + lng,
+                oauth_consumer_key: keys.consumer_key, //Consumer Key
+                oauth_token: keys.token, //Token
+                oauth_signature_method: "HMAC-SHA1",
+                oauth_timestamp: new Date().getTime(),
+                oauth_nonce: randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'),
+                term: term
+            };
+
+            var consumerSecret = keys.consumer_secret; //Consumer Secret
+            var tokenSecret = keys.token_secret; //Token Secret
+            var signature = oauthSignature.generate(method, url, params, consumerSecret, tokenSecret, {
+                encodeSignature: false
+            });
+
+            params['oauth_signature'] = signature.replace(/ /g, '%20').replace(/\+/g, '%2B');
+
+            var fullUrl = url + '?' + Object.keys(params).map(n => `${n}=${params[n]}`).join('&');
+
+            var script = document.createElement('script');
+
+            window[callback] = function(data) {
+                script.remove();
+                delete window[callback];
+                resolve(data);
+            };
+
+            var failureTimeout = setTimeout(function() {
+                reject(new Error('Failed to load'));
+            }, 1000 * 2);
+
+            script.onload = function() {
+                console.log('onload called');
+                if (!this.readyState || this.readyState == "loaded" || this.readyState == "complete") {
+                    console.log('loaded!');
+                    clearTimeout(failureTimeout);
+                } else {
+                    reject(new Error('failed to load'));
+                }
+            };
+
+            script.src = fullUrl;
+
+            document.body.appendChild(script);
+
+
+
+        });
+    }
+    </script>
 </body>
+
 </html>

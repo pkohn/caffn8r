@@ -56,11 +56,13 @@ text:hover {
                     }).then(function(res) {
 
                         searchYelp(res[0].lat, res[0].lon);
-                        // document.getElementById('numBiz').textContent = res.businesses.length;
-                        //UPDATE MAP and add markers L.map('thisLeaflet').setView([res[0].lat, res[0].lon], 12);
-                        //UPDATE WordCloud
+                        map.panTo(new L.LatLng(res[0].lat, res[0].lon), 13);
                         $("#wordcloud").empty();
-
+                        $("#business-info").empty();
+                        //Add markers on load
+                        //change map when you click on a coffee shop (target.nodeName?)
+                        //$("#wordcloud").load(function() { $("#wordcloud").fade(5000); }) ---> or show page-loader.gif
+                        //resize wordcloud so it is 100% when you resize page
                     })
 
                 });
@@ -88,13 +90,13 @@ text:hover {
         <div class="pk-third">
             <div class="pk-card-2 pk-padding-top" style="min-height:460px">
                 <h4><b>what's buzzin?</h4></b>
-                <i class="fa fa-comments-o" style="font-size:100px"></i>
+                <i class="fa fa-comments-o" style="font-size:100px"></i><br>
                 <svg id="wordcloud"></svg>
             </div>
         </div>
         <div class="pk-third">
             <div class="pk-card-2 pk-padding-top" style="min-height:460px">
-                <h4><b><span id = "numBiz"></span> caffn8tion stations found</h4></b>
+                <h4><b>caffn8tion stations nearby</h4></b>
                 <h4></h4>
                 <i class="fa fa-coffee" style="font-size:100px"></i>
                 <div class="businesses"></div>
@@ -117,7 +119,7 @@ text:hover {
                 <div>
                     <img src="{{image_url}}" alt="">
                 </div>
-                <p>Located @ {{location.address}} (<i class="fa fa-phone-square" style="font-size:15px"></i>: {{phone}})</p>
+                <p>Located @ {{location.address}} (<i class="fa fa-phone" style="font-size:15px"></i> {{phone}})</p>
                 <p>{{rating}} stars: "{{snippet_text}}"</p>
             </div>
     </script>
@@ -184,7 +186,7 @@ text:hover {
                     businessWords = {};
                     businessInfo = {};
 
-                    document.getElementById('numBiz').textContent = res.businesses.length;
+                    // document.getElementById('numBiz').textContent = res.businesses.length;
 
                     // Get all the words and counts of each word
                     const wordMap = res.businesses.reduce((acc, business) => {
@@ -241,7 +243,11 @@ text:hover {
     }
 
     document.body.addEventListener('click', function(event) {
+        
+        $("#business-info").empty();
+        
         var target = event.target;
+        
         if (target.nodeName === 'text') {
             const ids = businessWords[event.target.textContent];
 
@@ -270,8 +276,12 @@ text:hover {
                 ];
             });
 
+            
+            var coffeeIcon = L.icon({ iconUrl: 'coffee-bean.png', shadowUrl: 'coffee-bean.png', iconSize: [75, 75] }); 
+
+
             var markers = points.map(function(coords, i) {
-                return L.marker(coords)
+                return L.marker(coords, {icon: coffeeIcon})
                     .bindPopup("<b>Hello!</b><br>My name is " + businesses[i].name + '.');
             });
 
@@ -279,10 +289,31 @@ text:hover {
                 .addTo(map);
 
 
+
         } else if (target.classList.contains('business-link')) {
+            
             event.preventDefault();
+            map.removeLayer(businessLayer);
+
             var business = businessInfo[target.dataset.id];
+            
             console.log(business);
+
+            var points = [
+                    business.location.coordinate.latitude,
+                    business.location.coordinate.longitude
+                ];
+
+            console.log(points);
+           
+            var coffeeIcon = L.icon({ iconUrl: 'coffee-bean.png', shadowUrl: 'coffee-bean.png', iconSize: [75, 75] }); 
+
+            var markers = L.marker(points, {icon: coffeeIcon}).addTo(map);
+
+            // var markers = points.map(function(coords, i) {
+            //     return L.marker(coords)
+            //         .bindPopup("<b>Hello!</b><br>My name is " + business.name + '.');
+            // });
 
             const template = document.getElementById('business-info-template').innerHTML;
             const container = document.getElementById('business-info');

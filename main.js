@@ -484,7 +484,7 @@ const stopWords = [
 var map = L.map('thisLeaflet').setView([47.609895, -122.33025], 13);
 
 L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-    attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>  ',
+    attribution: 'Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a>  ',
     maxZoom: 18,
     id: 'pkohn.089fnpkl',
     accessToken: 'pk.eyJ1IjoicGtvaG4iLCJhIjoiY2lvcTNhaHdhMDAwanVlbTBvazIxNTVzeSJ9.242ozghNdV0FkcK1B9CO8Q'

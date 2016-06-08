@@ -3,6 +3,7 @@
 <title>Caffn8r</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="animate.css">
 <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
 <style type="text/css">
@@ -19,22 +20,16 @@ text:hover {
 <body>
     <!-- Header -->
     <header style="background-image: url('background2.jpg'); background-size: 100% auto">
-        <!-- make this background pic adjust based on screen size -->
+    <link rel="icon" href="coffee-bean.png"/>
+   
         <script src="https://code.jquery.com/jquery-2.2.4.js"></script>
-        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+       
+       <!--  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" /> -->
         <div class="pk-center">
             <h1 class="pk-xxxlarge pk-animate-right title-text">CAFFN8R</h1>
             <h6 class="pk-animate-left title-text"><b><i>Find your local buzz</h6></b>
             </i>
             <div class="pk-padding-32">
-                <!-- <form>
-    <label class="title-text">
-      Search Area
-      <input type="text" name="location" placeholder="Where are you?"><br><br>
-    </label>
-  </form>
-
-      <button class="pk-btn pk-xlarge pk-dark-grey pk-hover-light-grey" onclick="document.getElementById('id01').style.display='block'" style="font-weight:900;">Clik me meow</button> -->
                 <div class="title-text">
                     <form id="location-search">
                         <label>
@@ -52,17 +47,21 @@ text:hover {
                     var location = $(this).find('input').val();
 
                     $.ajax({
-                        url: 'http://nominatim.openstreetmap.org/search/usa/{{term}}?format=json&addressdetails=1'.replace('{{term}}', location)
+                        url: 'http://nominatim.openstreetmap.org/search/{{term}}?format=json&addressdetails=1'.replace('{{term}}', location)
                     }).then(function(res) {
 
                         searchYelp(res[0].lat, res[0].lon);
                         map.panTo(new L.LatLng(res[0].lat, res[0].lon), 13);
                         $("#wordcloud").empty();
                         $("#business-info").empty();
-                        //Add markers on load
-                        //change map when you click on a coffee shop (target.nodeName?)
-                        //$("#wordcloud").load(function() { $("#wordcloud").fade(5000); }) ---> or show page-loader.gif
+                        // $("#wordcloud").load(function() {
+                            $("#facomments").addClass("fa-spin fa-3x fa-fw");
+                          // });
+                        //spin cloud icon while loading
+                        //change map when you click on a coffee shop (target.nodeName?) and delete prev one
                         //resize wordcloud so it is 100% when you resize page
+                        //how to view on raw git?
+                        //favicon icon?
                     })
 
                 });
@@ -90,7 +89,8 @@ text:hover {
         <div class="pk-third">
             <div class="pk-card-2 pk-padding-top" style="min-height:460px">
                 <h4><b>what's buzzin?</h4></b>
-                <i class="fa fa-comments-o" style="font-size:100px"></i><br>
+                <i id = facomments class="fa fa-comments-o" style="font-size:100px"></i><br>
+                <!-- <span class="sr-only">A coffee cloud is forming...</span> -->
                 <svg id="wordcloud"></svg>
             </div>
         </div>
@@ -227,6 +227,7 @@ text:hover {
                     });
 
                     drawCloud(words);
+                    $("#facomments").removeClass("fa-spin fa-3x fa-fw");
 
                     const items = res.businesses.map(business => compile(template, business));
 
@@ -244,11 +245,12 @@ text:hover {
 
     document.body.addEventListener('click', function(event) {
         
-        $("#business-info").empty();
-        
         var target = event.target;
         
         if (target.nodeName === 'text') {
+            
+             $("#business-info").empty();
+
             const ids = businessWords[event.target.textContent];
 
             [].slice.call(document.getElementsByClassName('business-list-item')).forEach(function(item) {
@@ -281,8 +283,13 @@ text:hover {
 
 
             var markers = points.map(function(coords, i) {
-                return L.marker(coords, {icon: coffeeIcon})
-                    .bindPopup("<b>Hello!</b><br>My name is " + businesses[i].name + '.');
+                
+                    if(businesses[i].location.cross_streets === undefined || businesses[i].location.neighborhoods === undefined){
+                      return L.marker(coords, {icon: coffeeIcon})
+                      .bindPopup("<b>Hello!</b><br>My name is " + businesses[i].name + '.');
+
+                    } else return L.marker(coords, {icon: coffeeIcon}).bindPopup("<b>Hello!</b><br>My name is " + businesses[i].name + '. I\'m located at ' + businesses[i].location.cross_streets + ' in '+ businesses[i].location.neighborhoods + '.');
+          
             });
 
             businessLayer = L.layerGroup(markers)
@@ -299,21 +306,24 @@ text:hover {
             
             console.log(business);
 
-            var points = [
+            var points = [[
                     business.location.coordinate.latitude,
                     business.location.coordinate.longitude
-                ];
+                ]];
 
             console.log(points);
            
             var coffeeIcon = L.icon({ iconUrl: 'coffee-bean.png', shadowUrl: 'coffee-bean.png', iconSize: [75, 75] }); 
 
-            var markers = L.marker(points, {icon: coffeeIcon}).addTo(map);
+            var marker = points.map(function(coords, i) {
+                if(business.location.cross_streets === undefined || business.location.neighborhoods === undefined){
+                      return L.marker(coords, {icon: coffeeIcon})
+                      .bindPopup("<b>Hello!</b><br>My name is " + business.name + '.');
 
-            // var markers = points.map(function(coords, i) {
-            //     return L.marker(coords)
-            //         .bindPopup("<b>Hello!</b><br>My name is " + business.name + '.');
-            // });
+                    } else return L.marker(coords, {icon: coffeeIcon}).bindPopup("<b>Hello!</b><br>My name is " + business.name + '. I\'m located at ' + business.location.cross_streets + ' in '+ business.location.neighborhoods + '.');
+            });
+
+            businessLayer = L.layerGroup(marker).addTo(map);
 
             const template = document.getElementById('business-info-template').innerHTML;
             const container = document.getElementById('business-info');
@@ -397,8 +407,6 @@ text:hover {
             script.src = fullUrl;
 
             document.body.appendChild(script);
-
-
 
         });
     }

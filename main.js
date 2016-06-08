@@ -6,7 +6,7 @@ $('#location-search').on('submit', function(e) {
     var location = $(this).find('input').val();
 
     $.ajax({
-        url: 'https://nominatim.openstreetmap.org/search/{{term}}?format=json&addressdetails=1'.replace('{{term}}', location)
+        url: 'https://nominatim.openstreetmap.org/search/usa/{{term}}?format=json&addressdetails=1'.replace('{{term}}', location)
     }).then(function(res) {
 
         searchYelp(res[0].lat, res[0].lon);
